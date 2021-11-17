@@ -28,6 +28,9 @@ database:
   password: __replace__
   name: __replace__
 
+staticAsset:
+  host: production.static-assets.skygeario.com
+
 assetStore:
   isPublic: false
   cloud:

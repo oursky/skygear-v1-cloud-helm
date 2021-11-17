@@ -18,6 +18,10 @@
 {{- printf "%s-pgbouncer" .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "skygear.staticasset.name" }}
+{{- printf "%s-staticasset" .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
 {{- define "skygear.skygear-server.service.ports" }}
 - name: http
   protocol: TCP
