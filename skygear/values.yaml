@@ -30,6 +30,7 @@ database:
 
 staticAsset:
   host: production.static-assets.skygeario.com
+  hash: __replace__
 
 assetStore:
   isPublic: false
