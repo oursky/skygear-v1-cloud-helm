@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  skygear:
+  - apiVersion: v2
+    appVersion: 1.x
+    created: "2021-11-17T19:16:36.438415+08:00"
+    description: Helm Chart for deploying skygear v1 cloud app
+    digest: ae4c8c6ae887088d15faf8ff88252ebe3c6f23e9177308078e40e15db38dd6db
+    name: skygear
+    type: application
+    urls:
+    - https://github.com/oursky/skygear-v1-cloud-helm/releases/download/skygear-0.1.0/skygear-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-11-17T19:16:35.931063+08:00"
