@@ -34,7 +34,7 @@ staticAsset:
 assetStore:
   isPublic: false
   cloud:
-    host: __replace__
+    host: https://asset.skygeario.com
     token: __replace__
     publicPrefix: __replace__
     privatePrefix: __replace__
