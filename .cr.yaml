@@ -1,0 +1,3 @@
+owner: oursky
+git-repo: skygear-v1-cloud-helm
+charts-repo: https://github.com/oursky/skygear-v1-cloud-helm
