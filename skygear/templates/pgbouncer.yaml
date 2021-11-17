@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "skygear.pgbouncer.name" . | quote }}
+  labels:
+    {{- include "skygear.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ include "skygear.pgbouncer.name" . | quote }}
+  ports:
+  - name: postgres
+    protocol: TCP
+    port: 5432
+    targetPort: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "skygear.pgbouncer.name" . | quote }}
+  labels:
+    {{- include "skygear.labels" . | nindent 4 }}
+    app: {{ include "skygear.pgbouncer.name" . | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "skygear.pgbouncer.name" . | quote }}
+  template:
+    metadata:
+      labels:
+        {{- include "skygear.labels" . | nindent 8 }}
+        app: {{ include "skygear.pgbouncer.name" . | quote }}
+    spec:
+      containers:
+      - name: pgbouncer
+        image: {{ .Values.pgbouncer.image | quote }}
+        ports:
+        - name: postgres
+          protocol: TCP
+          containerPort: 5432
+        env:
+        - name: DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "skygear.secret.name" . | quote }}
+              key: DATABASE_HOST
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "skygear.secret.name" . | quote }}
+              key: DATABASE_USER
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "skygear.secret.name" . | quote }}
+              key: DATABASE_PASSWORD
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "skygear.secret.name" . | quote }}
+              key: DATABASE_NAME
+        - name: POOL_SIZE_SESSION
+          value: {{ .Values.pgbouncer.poolSizeSession | quote }}
+        - name: POOL_SIZE_TRANSACTION
+          value: {{ .Values.pgbouncer.poolSizeTransaction | quote }}
+        resources:
+          {{- toYaml .Values.pgbouncer.resources | nindent 10 }}

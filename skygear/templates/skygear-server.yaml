@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "skygear.skygear-server.name" . | quote }}
+  labels:
+    {{- include "skygear.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "skygear.labels" . | nindent 4 }}
+    app: {{ include "skygear.skygear-server.name" . | quote }}
+  ports:
+    {{- include "skygear.skygear-server.service.ports" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "skygear.skygear-server.master.name" . | quote }}
+  labels:
+    {{- include "skygear.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "skygear.labels" . | nindent 4 }}
+    app: {{ include "skygear.skygear-server.name" . | quote }}
+    variant: {{ include "skygear.skygear-server.master.name" . | quote }}
+  ports:
+    {{- include "skygear.skygear-server.service.ports" . | nindent 4 }}
+
+{{- $currentScope := . }}
+{{- $master := include "skygear.skygear-server.master.name" . }}
+{{- $slave := include "skygear.skygear-server.slave.name" . }}
+{{- range $index, $variant := list $master $slave }}
+{{- with $currentScope }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $variant | quote }}
+  labels:
+    {{- include "skygear.labels" . | nindent 4 }}
+    app: {{ include "skygear.skygear-server.name" . | quote }}
+    variant: {{ $variant | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "skygear.skygear-server.name" . | quote }}
+      variant: {{ $variant | quote }}
+  template:
+    metadata:
+      labels:
+        {{- include "skygear.labels" . | nindent 8 }}
+        app: {{ include "skygear.skygear-server.name" . | quote }}
+        variant: {{ $variant | quote }}
+    spec:
+      containers:
+      - name: skygear-server
+        image: {{ .Values.image | quote }}
+        ports:
+        {{- include "skygear.skygear-server.ports" . | nindent 8 }}
+        env:
+        {{- include "skygear.env-vars" . | nindent 8 }}
+        {{- if .Values.extraEnv }}
+        {{- toYaml .Values.extraEnv | nindent 8 }}
+        {{- end }}
+        {{- if (eq $index 1) }}
+        - name: SLAVE
+          value: "YES"
+        - name: PUBSUB_URL
+          value: ws://{{ include "skygear.skygear-server.master.name" . }}:80/pubsub
+        {{- end }}
+        {{- if .Values.envFromSecretName }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.envFromSecretName | quote }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /_status/healthz
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /_status/healthz
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 5
+{{- end }}
+{{- end }}

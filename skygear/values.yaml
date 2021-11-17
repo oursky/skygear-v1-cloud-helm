@@ -1,0 +1,72 @@
+image: __replace__
+appName: __replace__
+publicHost: __replace__
+urlPrefix: __replace__
+apiKey: __replace__
+masterKey: __replace__
+sentryDNS: __replace__
+deisRelease: __replace__
+tokenStoreSecret: __replace__
+customTokenSecret: __replace__
+logLevel: "error"
+devMode: "NO"
+
+extraEnv: []
+envFromSecretName: ""
+resources:
+  limits:
+    cpu: "1"
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+database:
+  host: __replace__
+  port: 5432
+  username: __replace__
+  password: __replace__
+  name: __replace__
+
+assetStore:
+  isPublic: false
+  cloud:
+    host: __replace__
+    token: __replace__
+    publicPrefix: __replace__
+    privatePrefix: __replace__
+
+smtp:
+  password: __replace__
+
+cms:
+  configFileURL: ""
+
+gcm:
+  enabled: false
+  apiKey: __replace__
+
+fcm:
+  enabled: false
+  serverKey: ""
+
+apns:
+  enabled: false
+  type: token
+  teamID: __replace__
+  keyID: __replace__
+  tokenKey: __replace__
+  certificate: __replace__
+  privateKey: __replace__
+
+pgbouncer:
+  image: gcr.io/oursky-kube/pgbouncer:git-d292e5e7c1
+  poolSizeSession: "9"
+  poolSizeTransaction: "1"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "64Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
