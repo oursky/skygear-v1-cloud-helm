@@ -33,12 +33,19 @@ staticAsset:
   hash: __replace__
 
 assetStore:
+  type: "cloud"
   isPublic: false
   cloud:
     host: https://asset.skygeario.com
     token: __replace__
     publicPrefix: __replace__
     privatePrefix: __replace__
+  s3:
+    region: __replace__
+    bucket: __replace__
+    accessKey: __replace__
+    secretKey: __replace__
+    urlPrefix: ""
 
 smtp:
   password: __replace__

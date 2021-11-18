@@ -57,7 +57,7 @@
 - name: TOKEN_STORE
   value: "jwt"
 - name: ASSET_STORE
-  value: cloud
+  value: {{ .Values.assetStore.type | quote }}
 {{- if .Values.assetStore.isPublic }}
 - name: ASSET_STORE_PUBLIC
   value: "YES"
@@ -65,6 +65,7 @@
 - name: ASSET_STORE_PUBLIC
   value: "NO"
 {{- end }}
+{{- if (eq .Values.assetStore.type "cloud") }}
 - name: CLOUD_ASSET_HOST
   value: {{ .Values.assetStore.cloud.host | quote }}
 - name: CLOUD_ASSET_TOKEN
@@ -76,6 +77,25 @@
   value: {{ .Values.assetStore.cloud.publicPrefix | quote }}
 - name: CLOUD_ASSET_PRIVATE_PREFIX
   value: {{ .Values.assetStore.cloud.privatePrefix | quote }}
+{{- end }}
+{{- if (eq .Values.assetStore.type "s3") }}
+- name: ASSET_STORE_REGION
+  value: {{ .Values.assetStore.s3.region | quote }}
+- name: ASSET_STORE_BUCKET
+  value: {{ .Values.assetStore.s3.bucket | quote }}
+- name: ASSET_STORE_S3_URL_PREFIX
+  value: {{ .Values.assetStore.s3.urlPrefix | quote }}
+- name: ASSET_STORE_ACCESS_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "skygear.secret.name" . | quote }}
+      key: ASSET_STORE_ACCESS_KEY
+- name: ASSET_STORE_SECRET_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "skygear.secret.name" . | quote }}
+      key: ASSET_STORE_SECRET_KEY
+{{- end }}
 - name: SMTP_HOST
   value: "smtp.sendgrid.net"
 - name: SMTP_PORT
