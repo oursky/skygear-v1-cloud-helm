@@ -155,14 +155,21 @@
 {{- if .Values.fcm.enabled }}
 - name: FCM_ENABLE
   value: "YES"
-{{- if .Values.fcm.serverKey }}
 - name: FCM_TYPE
-  value: server_key
+  value: {{ .Values.fcm.type | quote }}
+{{- if (eq .Values.fcm.type "server_key") }}
 - name: FCM_SERVER_KEY
   valueFrom:
     secretKeyRef:
       name: {{ include "skygear.secret.name" . | quote }}
       key: FCM_SERVER_KEY
+{{- end }}
+{{- if (eq .Values.fcm.type "service_account") }}
+- name: FCM_SERVICE_ACCOUNT_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "skygear.secret.name" . | quote }}
+      key: FCM_SERVICE_ACCOUNT_KEY
 {{- end }}
 {{- end }}
 {{- if .Values.apns.enabled }}

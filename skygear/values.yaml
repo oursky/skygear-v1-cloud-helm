@@ -59,7 +59,9 @@ gcm:
 
 fcm:
   enabled: false
-  serverKey: ""
+  type: server_key
+  serverKey: __replace__
+  serviceAccountKey: __replace__
 
 apns:
   enabled: false
